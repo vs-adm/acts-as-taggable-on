@@ -45,6 +45,23 @@ describe ActsAsTaggableOn::Tag do
         expect(ActsAsTaggableOn::Tag.named_like_any(%w(awesome epic)).count).to eq(3)
       end
     end
+
+    # XXX QnD fix for specific case
+    # XXX Should be replaced with custom coercers
+    context 'case insensitive Russian collation with е/ё indefference' do
+      if using_case_insensitive_collation?
+        include_context 'without unique index'
+      end
+
+      before(:each) do
+        ActsAsTaggableOn::Tag.create(name: 'Ёлка')
+        ActsAsTaggableOn::Tag.create(name: 'Соловьёв')
+      end
+
+      it 'should find both tags' do
+        expect(ActsAsTaggableOn::Tag.named_like_any(%w(елка соловьев)).count).to eq(2)
+      end
+    end
   end
 
   describe 'named any' do

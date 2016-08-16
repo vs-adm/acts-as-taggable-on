@@ -101,12 +101,14 @@ module ActsAsTaggableOn
 
       private
 
+      # XXX QnD fix for specific case
+      # XXX Should be replaced with custom coercers
       def comparable_name(str)
         if ActsAsTaggableOn.strict_case_match
           str
         else
           unicode_downcase(str.to_s)
-        end
+        end.gsub('Ё', 'Е').gsub('ё', 'е')
       end
 
       def binary
